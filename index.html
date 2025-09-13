@@ -1,279 +1,408 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Useful Website Directory</title>
-  <style>
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;
-      background:#0f172a;
-      color:#e6eef6;
-      padding:20px;
-      transition: background 0.3s ease;
-    }
-    .security-alert {
-      background: #7f1d1d;
-      color: #fecaca;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 25px;
-      text-align: center;
-      border: 1px solid #f87171;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .security-alert strong {
-      color: white;
-    }
-    h1{
-      text-align:center;
-      margin-bottom:20px;
-      font-size:22px;
-      color:#60a5fa;
-    }
-    #searchBox{
-      display:block;
-      margin:0 auto 20px auto;
-      padding:12px 16px;
-      border-radius:8px;
-      border:1px solid #334155;
-      max-width:500px;
-      width:100%;
-      font-size:15px;
-      background:#1e293b;
-      color:#e6eef6;
-      box-shadow:0 2px 8px rgba(0,0,0,0.2);
-      transition: all 0.3s ease;
-    }
-    #searchBox:focus{
-      outline:none;
-      border-color:#60a5fa;
-      box-shadow:0 0 0 3px rgba(96,165,250,0.3);
-    }
-    ul{
-      list-style:none;
-      padding:0;
-      margin:0;
-      display:grid;
-      gap:16px;
-      max-width:800px;
-      margin-inline:auto;
-    }
-    li{
-      background:#1e293b;
-      padding:18px;
-      border-radius:12px;
-      box-shadow:0 4px 14px rgba(0,0,0,0.5);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      flex-wrap:wrap;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      border: 1px solid #334155;
-    }
-    li:hover{
-      transform: translateY(-3px);
-      box-shadow:0 6px 16px rgba(0,0,0,0.6);
-      border-color: #60a5fa;
-    }
-    .info{
-      flex:1;
-      margin-right:10px;
-      min-width: 200px;
-    }
-    .name{
-      font-weight:600;
-      font-size:17px;
-      color:#f0f9ff;
-    }
-    .url{
-      color:#9aa4b2;
-      font-size:14px;
-      word-break: break-all;
-    }
-    .actions{
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .action-btn{
-      padding:8px 16px;
-      border-radius:8px;
-      font-size:14px;
-      font-weight:600;
-      cursor:pointer;
-      border: none;
-      transition: all 0.2s ease;
-    }
-    .new-tab{
-      background:#2563eb;
-      color:#fff;
-    }
-    .new-tab:hover{
-      background:#1e4fd1;
-      transform: scale(1.05);
-    }
-    .same-page{
-      background:#374151;
-      color:#e6eef6;
-      border: 1px solid #4b5563;
-    }
-    .same-page:hover{
-      background:#4b5563;
-      transform: scale(1.05);
-    }
-    .empty{
-      text-align:center;
-      color:#9aa4b2;
-      margin-top:30px;
-      font-size:15px;
-    }
-    .header-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-    .refresh-btn {
-      background: #0ea5e9;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 16px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s ease;
-    }
-    .refresh-btn:hover {
-      background: #0284c7;
-      transform: scale(1.05);
-    }
-    @media(max-width:640px){
-      li{
-        flex-direction:column;
-        align-items:flex-start;
-        gap: 12px;
-      }
-      .actions{
-        margin-top:10px;
-        width: 100%;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .action-btn {
-        width: 100%;
-        text-align: center;
-        flex: none;
-      }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Contacts — Directory UI Preview</title>
+<link rel="icon" href="data:,">
+<style>
+/* ===== Initial Password Screen Styles ===== */
+#passwordScreen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  z-index: 1000;
+  font-family: sans-serif;
+  color: black;
+  font-size: 2rem;
+  text-align: center;
+  padding: 20px;
+}
+
+#passwordScreen .password-trigger {
+  /* text-decoration: underline; */
+}
+
+/* ===== Contacts Directory UI Styles (original, with modifications) ===== */
+:root {
+  --bg: #071025;
+  --card: #0f1b2b;
+  --muted: #9fb0c8;
+  --accent: #16a34a;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-2: rgba(255, 255, 255, 0.02);
+  --base-font: 18px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+*{ box-sizing: border-box }
+
+/* The main app content is initially hidden */
+body.initial-state #main-app-content {
+  display: none;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--bg), #042233);
+  color: #eaf4ff;
+  min-height: 100vh;
+  padding: 28px;
+  font-size: var(--base-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 1100px; margin: 0 auto }
+header { display: flex; gap: 20px; align-items: center; justify-content: space-between; margin-bottom: 20px }
+.brand { display: flex; gap: 14px; align-items: center }
+.logo { width: 72px; height: 72px; border-radius: 14px; background: linear-gradient(135deg, #0ea5a4, #3b82f6); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #022; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45); font-size: 20px }
+h1 { margin: 0; font-size: 1.6rem }
+.subtitle { color: var(--muted); font-size: 1.05rem; margin-top: 6px }
+.controls { display: flex; gap: 14px; align-items: center }
+.search { display: flex; align-items: center; gap: 12px; background: var(--glass); padding: 12px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.03) }
+.search input { background: transparent; border: 0; color: inherit; outline: none; font-size: 1.05rem; width: 420px; min-width: 160px }
+.btn { background: var(--card); border: 1px solid rgba(255, 255, 255, 0.03); padding: 12px 16px; border-radius: 12px; color: inherit; cursor: pointer; font-weight: 800; font-size: 1rem; transition: background .2s, box-shadow .2s }
+.btn.positive { background: linear-gradient(180deg, #10b981, #059669); color: white; border: 0; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.14) }
+.smallmuted { color: var(--muted); font-size: 1rem }
+main { display: grid; grid-template-columns: 280px 1fr; gap: 20px }
+.sidebar { background: var(--card); padding: 18px; border-radius: 14px; border: 1px solid var(--glass-2); height: calc(100vh - 240px); overflow: auto }
+.alpha-list { display: flex; flex-wrap: wrap; gap: 8px }
+.alpha-list button { background: transparent; border: 1px solid rgba(255, 255, 255, 0.03); color: var(--muted); padding: 8px 10px; border-radius: 10px; cursor: pointer; font-size: 1rem; transition: background .2s, color .2s }
+.alpha-list button.active { background: #e6fef0; color: #01340f; border: 0 }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px }
+.card { background: linear-gradient(180deg, var(--card), #071827); padding: 16px; border-radius: 14px; border: 1px solid var(--glass-2); display: flex; gap: 16px; align-items: center; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15) }
+.avatar { width: 72px; height: 72px; border-radius: 14px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); display: flex; align-items: center; justify-content: center; font-weight: 900; color: #021; font-size: 20px; box-shadow: 0 2px 10px rgba(139, 92, 246, 0.10) }
+.meta { flex: 1 }
+.name { font-weight: 900; font-size: 1.12rem }
+.phone { color: var(--muted); font-size: 1.02rem; margin-top: 6px }
+.actions { display: flex; gap: 12px; align-items: center }
+.call-btn { background: var(--accent); color: #042; border: 0; padding: 12px 16px; border-radius: 12px; cursor: pointer; font-weight: 900 }
+.copy-btn { background: transparent; border: 1px solid rgba(255, 255, 255, 0.04); padding: 10px 14px; border-radius: 12px; color: var(--muted); cursor: pointer; font-weight: 800 }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 28px; background: #0b1b14; padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.04); color: #c9f7d8; box-shadow: 10px 36px rgba(2, 50, 30, 0.45); display: none; font-weight: 800; z-index: 1300 }
+
+/* ===== Gate overlay styles ===== */
+#gateOverlay {
+  position: fixed;
+  inset: 0;
+  display: none; /* Initially hidden */
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.75), rgba(2, 10, 30, 0.85));
+  z-index: 1200;
+  padding: 24px;
+}
+.gateCard { background: linear-gradient(180deg, #071827, #0b2030); padding: 28px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.04); max-width: 520px; width: 100%; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6) }
+.gateTitle { font-size: 1.2rem; font-weight: 900; margin-bottom: 8px }
+.gateHint { color: var(--muted); margin-bottom: 18px }
+.gateRow { display: flex; gap: 12px; align-items: center }
+#gateInput { flex: 1; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.04); background: transparent; color: inherit; outline: none; font-weight: 800; font-size: 1rem }
+#gateInput::-webkit-text-field-decoration { display:none; }
+#gateInput { -webkit-text-security: disc; }
+.gateBtn { padding: 10px 14px; border-radius: 12px; border: 0; background: linear-gradient(180deg, #10b981, #059669); font-weight: 900; cursor: pointer }
+.gateFooter { color: var(--muted); font-size: 0.9rem; margin-top: 12px }
+
+/* When overlay active, dim background interaction */
+body.locked #main-app-content {
+  filter: blur(3px) grayscale(.02) brightness(.9);
+  pointer-events: none;
+  user-select: none;
+}
+</style>
 </head>
-<body>
-  <div class="security-alert">
-    <strong>Security Notice:</strong> This is not a login page. This directory only lists external websites. Never enter credentials on this page. Verify URLs before visiting.
-  </div>
-  <div class="header-container">
-    <h1>External Website Directory</h1>
-    <button class="refresh-btn" onclick="loadSites()">Refresh</button>
-  </div>
-  <input type="text" id="searchBox" placeholder="Search websites by name or URL..." />
-  <ul id="siteList"></ul>
-  <div id="emptyMsg" class="empty" style="display:none;">No websites listed (websites.txt is empty or missing).</div>
+<body class="initial-state">
 
-  <script>
-    let sites = [];
+<!-- The simple, initial password page -->
+<div id="passwordScreen">
+  this is <span id="passwordTrigger" class="password-trigger">my</span> first html
+</div>
 
-    async function loadSites(){
-      try{
-        const res = await fetch('websites.txt');
-        const text = await res.text();
-        const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l);
-        const list = document.getElementById('siteList');
-        const emptyMsg = document.getElementById('emptyMsg');
-        list.innerHTML = '';
-        if(lines.length === 0){
-          emptyMsg.style.display = 'block';
-          return;
-        }
-        let count = 0;
-        sites = [];
-        lines.forEach(line=>{
-          const trimmedLine = line.trim();
-          const nameMatch = trimmedLine.match(/n:\"([^\"]+)\"/);
-          const urlMatch = trimmedLine.match(/w:\"([^\"]+)\"/);
-          if(nameMatch && urlMatch){
-            const name = nameMatch[1];
-            const url = urlMatch[1];
-            if(url.toLowerCase() === 'none') return;
-            const openInNewTabOnly = trimmedLine.endsWith(',nt');
-            sites.push({name, url, openInNewTabOnly});
-            count++;
-          }
-        });
-        if(count === 0){
-          emptyMsg.style.display = 'block';
-        } else {
-          emptyMsg.style.display = 'none';
-          renderSites(sites);
-        }
-      }catch(err){
-        console.error('Failed to load websites.txt', err);
-        document.getElementById('emptyMsg').style.display = 'block';
+<!-- The Contacts Directory content, initially hidden -->
+<div id="main-app-content">
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">CT</div>
+        <div>
+          <h1>Contacts Directory</h1>
+          <div class="subtitle" id="count">0 contacts</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="search" role="search" aria-label="Search contacts">
+          <input id="search" placeholder="Search name or number" autocomplete="off" />
+        </div>
+        <button id="refreshBtn" class="btn">Refresh</button>
+      </div>
+    </header>
+  
+    <main>
+      <aside class="sidebar" aria-label="Alphabet filter">
+        <h3>Jump to</h3>
+        <div class="alpha-list" id="alphaList"></div>
+      </aside>
+      <section>
+        <div class="grid" id="contactsGrid"></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Gate overlay -->
+<div id="gateOverlay" role="dialog" aria-modal="true" aria-label="Access code required">
+  <div class="gateCard" role="document">
+    <div class="gateTitle">Access code required</div>
+    <div class="gateHint">Enter the access code to unlock the contacts directory.</div>
+    <div class="gateRow">
+      <label for="gateInput" class="sr-only">Access code</label>
+      <input id="gateInput" type="text" inputmode="text" autocomplete="off" aria-label="Access code" placeholder="Enter access code" />
+      <button id="gateSubmit" class="gateBtn" aria-label="Unlock">Unlock</button>
+    </div>
+    <div class="gateFooter"></div>
+  </div>
+</div>
+
+<script>
+/* ====== Core Contacts Logic ====== */
+const docId = "12zq_UGGOdTgLg1prf7ubuUlzqnPBaRFEadTEe6IsKHU";
+let contacts = [];
+let filteredContacts = [];
+let currentLetter = '';
+let sortAsc = true;
+let appUnlocked = false;
+
+function buildDocExportUrl(){
+  return `https://docs.google.com/document/d/${docId}/export?format=txt`;
+}
+
+function showToast(msg, timeout=1800){
+  const t=document.getElementById('toast');
+  if (t) {
+    t.textContent=msg; t.style.display='block';
+    clearTimeout(t._to);
+    t._to=setTimeout(()=>t.style.display='none',timeout);
+  }
+}
+
+function parseContacts(txt){
+  const arr=[]; if(!txt) return arr;
+  const lines=txt.split(/\r?\n/).map(l=>l.trim()).filter(l=>l);
+  lines.forEach(line=>{
+    const m=line.match(/n:"(.*?)"\s*=\s*p:"(.*?)"/i);
+    if(m){ arr.push({name:m[1], phone:m[2]}); return; }
+    if(line.includes(',')){
+      const parts=line.split(',');
+      arr.push({name:parts[0].trim(), phone:parts[1]?.trim()});
+    }
+  });
+  return arr;
+}
+
+async function fetchContacts(){
+  try{
+    const url=buildDocExportUrl();
+    const res=await fetch(url);
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const txt=await res.text();
+    contacts=parseContacts(txt);
+    sortContacts();
+    renderContacts();
+    updateCount();
+    showToast("Contacts loaded");
+  }catch(e){
+    console.error(e);
+    showToast("Failed to fetch contacts");
+  }
+}
+
+function updateCount(){
+  const countElement = document.getElementById('count');
+  if (countElement) {
+    countElement.textContent = `${contacts.length} contact${contacts.length !== 1 ? 's' : ''}`;
+  }
+}
+
+function renderContacts(){
+  let list=contacts.slice();
+  if(currentLetter){ list=list.filter(c=>c.name?.[0]?.toUpperCase()===currentLetter); }
+  const searchInput = document.getElementById('search');
+  const q = searchInput ? searchInput.value.toLowerCase() : '';
+  if(q){ list=list.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q)); }
+  filteredContacts=list;
+  const grid=document.getElementById('contactsGrid');
+  if (!grid) return;
+  grid.innerHTML='';
+  if(!list.length){
+    grid.innerHTML=`<div class="smallmuted" style="grid-column:1/-1;text-align:center;padding:32px 0;">No contacts found.</div>`;
+    return;
+  }
+  list.forEach(c=>{
+    const card=document.createElement('div');
+    card.className="card";
+    const av=document.createElement('div');
+    av.className="avatar"; av.textContent=c.name?.[0]?.toUpperCase()||'?';
+    const meta=document.createElement('div');
+    meta.className="meta";
+    meta.innerHTML=`<div class="name">${escapeHtml(c.name)}</div><div class="phone">${escapeHtml(c.phone)}</div>`;
+    const actions=document.createElement('div');
+    actions.className="actions";
+    const call=document.createElement('button');
+    call.className="call-btn"; call.textContent="Call";
+    call.onclick=()=>showToast("Call "+c.phone);
+    const copy=document.createElement('button');
+    copy.className="copy-btn"; copy.textContent="Copy";
+    copy.onclick=()=>{
+        const tempInput = document.createElement('input');
+        tempInput.value = c.phone;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        showToast("Copied "+c.phone);
+    };
+    actions.appendChild(call); actions.appendChild(copy);
+    card.appendChild(av); card.appendChild(meta); card.appendChild(actions);
+    grid.appendChild(card);
+  });
+}
+
+function sortContacts(){
+  contacts.sort((a,b)=>sortAsc?a.name.localeCompare(b.name):b.name.localeCompare(a.name));
+  renderContacts();
+}
+
+function escapeHtml(unsafe) {
+  if(!unsafe) return '';
+  return unsafe.replace(/[&<"'>]/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); });
+}
+
+/* ===== Gate logic ===== */
+const storedHashObf = "136d03b4-e053f6f1-80637639-904337ee-547768d1-68b0cbea-58efc839-c5f4d4e9";
+const storedHash = storedHashObf.split('-').reverse().join('');
+
+function hexFromBuffer(buf){
+  const arr = Array.from(new Uint8Array(buf));
+  return arr.map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkAccessCode(value){
+  const trimmed = (value || '').trim();
+  if(!trimmed) return false;
+  try{
+    const enc = new TextEncoder().encode(trimmed);
+    const hashBuf = await crypto.subtle.digest('SHA-256', enc);
+    const hex = hexFromBuffer(hashBuf);
+    return hex === storedHash;
+  }catch(e){
+    console.error("Hash error", e);
+    return false;
+  }
+}
+
+function unlockApp(){
+  appUnlocked = true;
+  document.body.classList.remove('locked');
+  document.body.removeAttribute('aria-busy');
+  
+  const passwordScreen = document.getElementById('passwordScreen');
+  const mainAppContent = document.getElementById('main-app-content');
+  const gateOverlay = document.getElementById('gateOverlay');
+  
+  if (passwordScreen) passwordScreen.style.display = 'none';
+  if (mainAppContent) mainAppContent.style.display = 'block';
+
+  if (gateOverlay) gateOverlay.style.display='none';
+  
+  fetchContacts();
+  const searchInput = document.getElementById('search');
+  if (searchInput) searchInput.focus();
+}
+
+function lockApp(){
+  appUnlocked = false;
+  document.body.classList.add('locked');
+  const gateOverlay = document.getElementById('gateOverlay');
+  if (gateOverlay) gateOverlay.style.display='flex';
+  document.body.setAttribute('aria-busy', 'true');
+  const gateInput = document.getElementById('gateInput');
+  if (gateInput) {
+    gateInput.value = '';
+    gateInput.focus();
+  }
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  const search = document.getElementById('search');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const alphaList = document.getElementById('alphaList');
+  const passwordTrigger = document.getElementById('passwordTrigger');
+  const gateInput = document.getElementById('gateInput');
+  const gateSubmit = document.getElementById('gateSubmit');
+  const mainAppContent = document.getElementById('main-app-content');
+  
+  if (search) search.oninput = renderContacts;
+  if (refreshBtn) refreshBtn.onclick = () => {
+    if (!appUnlocked) {
+      showToast("Unlock to refresh");
+      return;
+    }
+    fetchContacts();
+  };
+
+  if (alphaList) {
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(ch => {
+      const btn = document.createElement('button');
+      btn.textContent = ch;
+      btn.onclick = () => {
+        currentLetter = ch;
+        document.querySelectorAll('#alphaList button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderContacts();
+      };
+      alphaList.appendChild(btn);
+    });
+  }
+
+  if (gateSubmit && gateInput) {
+    gateSubmit.addEventListener('click', async () => {
+      const ok = await checkAccessCode(gateInput.value);
+      if (ok) {
+        unlockApp();
+        showToast("Unlocked");
+      } else {
+        showToast("Incorrect access code");
+        gateInput.select();
       }
-    }
-
-    function renderSites(data){
-      const list = document.getElementById('siteList');
-      list.innerHTML = '';
-      data.forEach(({name, url, openInNewTabOnly})=>{
-        const li = document.createElement('li');
-
-        const info = document.createElement('div');
-        info.className = 'info';
-        info.innerHTML = `<div class="name">${name}</div><div class="url">${url}</div>`;
-
-        const actions = document.createElement('div');
-        actions.className = 'actions';
-
-        const newTabBtn = document.createElement('button');
-        newTabBtn.className = 'action-btn new-tab';
-        newTabBtn.textContent = 'Open in New Tab';
-        newTabBtn.onclick = () => window.open(url, '_blank', 'noopener,noreferrer');
-
-        if (openInNewTabOnly) {
-          actions.appendChild(newTabBtn);
-        } else {
-          const samePageBtn = document.createElement('button');
-          samePageBtn.className = 'action-btn same-page';
-          samePageBtn.textContent = 'Open Here';
-          samePageBtn.onclick = () => {
-            if(confirm(`You are leaving this directory to visit:\n${url}\n\nAlways verify the URL before entering credentials.\n\nProceed?`)) {
-              window.location.href = url;
-            }
-          };
-          actions.appendChild(newTabBtn);
-          actions.appendChild(samePageBtn);
-        }
-
-        li.appendChild(info);
-        li.appendChild(actions);
-        list.appendChild(li);
-      });
-    }
-
-    document.getElementById('searchBox').addEventListener('input', (e)=>{
-      const query = e.target.value.toLowerCase();
-      const filtered = sites.filter(s=> 
-        s.name.toLowerCase().includes(query) || 
-        s.url.toLowerCase().includes(query)
-      );
-      renderSites(filtered);
     });
 
-    // Initial load
-    loadSites();
-  </script>
+    gateInput.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        gateSubmit.click();
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        gateInput.value = '';
+      }
+    });
+  }
+
+  if (passwordTrigger) {
+    passwordTrigger.addEventListener('click', () => {
+      lockApp();
+    });
+  }
+  
+  // Set the initial state to be locked on every page load
+  document.body.classList.add('initial-state');
+  if (mainAppContent) {
+    mainAppContent.style.display = 'none';
+  }
+});
+</script>
 </body>
 </html>
