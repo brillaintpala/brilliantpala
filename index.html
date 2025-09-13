@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Useful Website Directory</title>
+  <style>
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;
+      background:#0f172a;
+      color:#e6eef6;
+      padding:20px;
+      transition: background 0.3s ease;
+    }
+    .security-alert {
+      background: #7f1d1d;
+      color: #fecaca;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      text-align: center;
+      border: 1px solid #f87171;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .security-alert strong {
+      color: white;
+    }
+    h1{
+      text-align:center;
+      margin-bottom:20px;
+      font-size:22px;
+      color:#60a5fa;
+    }
+    #searchBox{
+      display:block;
+      margin:0 auto 20px auto;
+      padding:12px 16px;
+      border-radius:8px;
+      border:1px solid #334155;
+      max-width:500px;
+      width:100%;
+      font-size:15px;
+      background:#1e293b;
+      color:#e6eef6;
+      box-shadow:0 2px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+    #searchBox:focus{
+      outline:none;
+      border-color:#60a5fa;
+      box-shadow:0 0 0 3px rgba(96,165,250,0.3);
+    }
+    ul{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:grid;
+      gap:16px;
+      max-width:800px;
+      margin-inline:auto;
+    }
+    li{
+      background:#1e293b;
+      padding:18px;
+      border-radius:12px;
+      box-shadow:0 4px 14px rgba(0,0,0,0.5);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid #334155;
+    }
+    li:hover{
+      transform: translateY(-3px);
+      box-shadow:0 6px 16px rgba(0,0,0,0.6);
+      border-color: #60a5fa;
+    }
+    .info{
+      flex:1;
+      margin-right:10px;
+      min-width: 200px;
+    }
+    .name{
+      font-weight:600;
+      font-size:17px;
+      color:#f0f9ff;
+    }
+    .url{
+      color:#9aa4b2;
+      font-size:14px;
+      word-break: break-all;
+    }
+    .actions{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .action-btn{
+      padding:8px 16px;
+      border-radius:8px;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .new-tab{
+      background:#2563eb;
+      color:#fff;
+    }
+    .new-tab:hover{
+      background:#1e4fd1;
+      transform: scale(1.05);
+    }
+    .same-page{
+      background:#374151;
+      color:#e6eef6;
+      border: 1px solid #4b5563;
+    }
+    .same-page:hover{
+      background:#4b5563;
+      transform: scale(1.05);
+    }
+    .empty{
+      text-align:center;
+      color:#9aa4b2;
+      margin-top:30px;
+      font-size:15px;
+    }
+    .header-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .refresh-btn {
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .refresh-btn:hover {
+      background: #0284c7;
+      transform: scale(1.05);
+    }
+    @media(max-width:640px){
+      li{
+        flex-direction:column;
+        align-items:flex-start;
+        gap: 12px;
+      }
+      .actions{
+        margin-top:10px;
+        width: 100%;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .action-btn {
+        width: 100%;
+        text-align: center;
+        flex: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="security-alert">
+    <strong>Security Notice:</strong> This is not a login page. This directory only lists external websites. Never enter credentials on this page. Verify URLs before visiting.
+  </div>
+  <div class="header-container">
+    <h1>External Website Directory</h1>
+    <button class="refresh-btn" onclick="loadSites()">Refresh</button>
+  </div>
+  <input type="text" id="searchBox" placeholder="Search websites by name or URL..." />
+  <ul id="siteList"></ul>
+  <div id="emptyMsg" class="empty" style="display:none;">No websites listed (websites.txt is empty or missing).</div>
+
+  <script>
+    let sites = [];
+
+    async function loadSites(){
+      try{
+        const res = await fetch('websites.txt');
+        const text = await res.text();
+        const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l);
+        const list = document.getElementById('siteList');
+        const emptyMsg = document.getElementById('emptyMsg');
+        list.innerHTML = '';
+        if(lines.length === 0){
+          emptyMsg.style.display = 'block';
+          return;
+        }
+        let count = 0;
+        sites = [];
+        lines.forEach(line=>{
+          const trimmedLine = line.trim();
+          const nameMatch = trimmedLine.match(/n:\"([^\"]+)\"/);
+          const urlMatch = trimmedLine.match(/w:\"([^\"]+)\"/);
+          if(nameMatch && urlMatch){
+            const name = nameMatch[1];
+            const url = urlMatch[1];
+            if(url.toLowerCase() === 'none') return;
+            const openInNewTabOnly = trimmedLine.endsWith(',nt');
+            sites.push({name, url, openInNewTabOnly});
+            count++;
+          }
+        });
+        if(count === 0){
+          emptyMsg.style.display = 'block';
+        } else {
+          emptyMsg.style.display = 'none';
+          renderSites(sites);
+        }
+      }catch(err){
+        console.error('Failed to load websites.txt', err);
+        document.getElementById('emptyMsg').style.display = 'block';
+      }
+    }
+
+    function renderSites(data){
+      const list = document.getElementById('siteList');
+      list.innerHTML = '';
+      data.forEach(({name, url, openInNewTabOnly})=>{
+        const li = document.createElement('li');
+
+        const info = document.createElement('div');
+        info.className = 'info';
+        info.innerHTML = `<div class="name">${name}</div><div class="url">${url}</div>`;
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const newTabBtn = document.createElement('button');
+        newTabBtn.className = 'action-btn new-tab';
+        newTabBtn.textContent = 'Open in New Tab';
+        newTabBtn.onclick = () => window.open(url, '_blank', 'noopener,noreferrer');
+
+        if (openInNewTabOnly) {
+          actions.appendChild(newTabBtn);
+        } else {
+          const samePageBtn = document.createElement('button');
+          samePageBtn.className = 'action-btn same-page';
+          samePageBtn.textContent = 'Open Here';
+          samePageBtn.onclick = () => {
+            if(confirm(`You are leaving this directory to visit:\n${url}\n\nAlways verify the URL before entering credentials.\n\nProceed?`)) {
+              window.location.href = url;
+            }
+          };
+          actions.appendChild(newTabBtn);
+          actions.appendChild(samePageBtn);
+        }
+
+        li.appendChild(info);
+        li.appendChild(actions);
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('searchBox').addEventListener('input', (e)=>{
+      const query = e.target.value.toLowerCase();
+      const filtered = sites.filter(s=> 
+        s.name.toLowerCase().includes(query) || 
+        s.url.toLowerCase().includes(query)
+      );
+      renderSites(filtered);
+    });
+
+    // Initial load
+    loadSites();
+  </script>
+</body>
+</html>
